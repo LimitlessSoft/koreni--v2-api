@@ -20,5 +20,20 @@ app.use('/korisnik/tip', apiKorisnikTip)
 var apiClanak = require('./routers/clanak')
 app.use('/clanak', apiClanak)
 
+var apiAktivnost = require('./routers/aktivnost')
+app.use('/aktivnost', apiAktivnost)
+
+var apiIzostanak = require('./routers/izostanak')
+app.use('/izostanak', apiIzostanak)
+
+var apiIzgovor = require('./routers/izgovor')
+app.use('/izgovor', apiIzgovor)
+
+var apiClanarine = require('./routers/clanarina')
+app.use('/clanarina', apiClanarine)
+
+var apiAktivnostTip = require('./routers/aktivnostTip')
+app.use('/aktivnost/tip', apiAktivnostTip)
+
 app.listen(3000)
 console.log("Started @ http://localhost:3000/")
