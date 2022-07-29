@@ -3,7 +3,7 @@ var router = express.Router()
 var sql = require('../db')
 
 router.get('/list', function(req, res) {
-    sql.query(`SELECT ID, NAZIV FROM AKTIVNOST_TIP`, (err, resp) => {
+    sql.query(`select id, naziv from aktivnost_tip`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -24,8 +24,8 @@ router.post('/insert', function(req, res) {
             return res.status(400).send(`Morate proslediti parametar 'naziv'`)
         }
 
-    sql.query(`INSERT INTO AKTIVNOST_TIP (NAZIV)
-    VALUES ('${req.body.naziv}')`, (err, resp) => {
+    sql.query(`insert into aktivnost_tip (naziv)
+    values ('${req.body.naziv}')`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()

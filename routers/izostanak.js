@@ -3,7 +3,7 @@ var router = express.Router()
 var sql = require('../db')
 
 router.get('/list', function(req, res) {
-    sql.query(`SELECT USERNAME, AKTIVNOST_ID, IZGOVOR_ID FROM IZOSTANAK`, (err, resp) => {
+    sql.query(`select username, aktivnost_id, izgovor_id from izostanak`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -27,7 +27,7 @@ router.delete('/delete', function(req, res) {
         }
 
 
-    sql.query(`DELETE FROM IZOSTANAK WHERE USERNAME = '${req.body.username}' AND AKTIVNOST_ID = ${req.body.aktivnostid}`, (err, resp) => {
+    sql.query(`delete from izostanak where username = '${req.body.username}' and aktivnost_id = ${req.body.aktivnostid}`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -55,9 +55,9 @@ router.post('/insertorupdate', function(req, res) {
         return res.status(400).send(`Morate proslediti parametar 'izgovorid'`)
     }
     
-    sql.query(`INSERT INTO IZOSTANAK (USERNAME, AKTIVNOST_ID, IZGOVOR_ID)
-    VALUES ('${req.body.username}', ${req.body.aktivnostid}, ${req.body.izgovorid})
-    ON DUPLICATE KEY UPDATE IZGOVOR_ID = ${req.body.izgovorid}`, (err, resp) => {
+    sql.query(`insert into izostanak (username, aktivnost_id, izgovor_id)
+    values ('${req.body.username}', ${req.body.aktivnostid}, ${req.body.izgovorid})
+    on duplicate key update izgovor_id = ${req.body.izgovorid}`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()

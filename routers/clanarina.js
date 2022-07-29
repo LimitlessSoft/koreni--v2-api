@@ -18,10 +18,10 @@ router.get('/get', function(req, res) {
         return res.status(400).send(`Morate proslediti parametar 'godina'`).end()
     }
 
-    sql.query(`SELECT KORISNIK, MESEC, GODINA, DATUM_PLACANJA FROM CLANARINA WHERE
-        KORISNIK = '${req.query.username}'
-        AND MESEC = ${req.query.mesec} AND
-        GODINA = ${req.query.godina}`, (err, resp) => {
+    sql.query(`select korisnik, mesec, godina, datum_placanja from clanarina where
+    korisnik = '${req.query.username}'
+        and mesec = ${req.query.mesec} and
+        godina = ${req.query.godina}`, (err, resp) => {
             if(err) {
                 console.log(err)
                 return res.status(500).end()
@@ -36,7 +36,7 @@ router.get('/get', function(req, res) {
 })
 
 router.get('/list', function(req, res) {
-    sql.query(`SELECT KORISNIK, MESEC, GODINA, DATUM_PLACANJA FROM CLANARINA`, (err, resp) => {
+    sql.query(`select korisnik, mesec, godina, datum_placanja from clanarina`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -69,9 +69,8 @@ router.post('/insertorupdate', function(req, res) {
     var isoDate = new Date(req.body.datumPlacanja);
     var mySQLDateString = isoDate.toJSON().slice(0, 19).replace('T', ' ');
 
-    sql.query(`INSERT INTO CLANARINA (KORISNIK, MESEC, DATUM_PLACANJA, GODINA)
-    VALUES ('${req.body.username}', ${req.body.mesec}, '${mySQLDateString}', ${req.body.godina})
-    ON DUPLICATE KEY UPDATE DATUM_PLACANJA = '${mySQLDateString}'`, (err, resp) => {
+    sql.query(`insert into clanarina (korisnik, mesec, datum_placanja, godina)
+    values ('${req.body.username}', ${req.body.mesec}, '${mySQLDateString}', ${req.body.godina})`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -98,8 +97,8 @@ router.delete('/delete', function(req, res) {
         }
 
 
-    sql.query(`DELETE FROM CLANARINA WHERE KORISNIK = '${req.body.korisnik}'
-        AND MESEC = ${req.body.mesec} AND GODINA = ${req.body.godina}`, (err, resp) => {
+    sql.query(`delete from clanarina where korisnik = '${req.body.korisnik}'
+        and mesec = ${req.body.mesec} and godina = ${req.body.godina}`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()

@@ -3,7 +3,7 @@ var router = express.Router()
 var sql = require('../db')
 
 router.get('/list', function(req, res) {
-    sql.query(`SELECT ID, DATUM, TIP, UCESNICI FROM AKTIVNOST`, (err, resp) => {
+    sql.query(`select id, datum, tip, ucesnici from aktivnost`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -34,8 +34,8 @@ router.post('/insert', function(req, res) {
     var isoDate = new Date(req.body.datum);
     var mySQLDateString = isoDate.toJSON().slice(0, 19).replace('T', ' ');
 
-    sql.query(`INSERT INTO AKTIVNOST (DATUM, TIP, UCESNICI)
-    VALUES ('${mySQLDateString}', ${req.body.tip}, '${req.body.ucesnici}')`, (err, resp) => {
+    sql.query(`insert into aktivnost (datum, tip, ucesnici) 
+    values ('${mySQLDateString}', ${req.body.tip}, '${req.body.ucesnici}')`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -55,7 +55,7 @@ router.delete('/delete', function(req, res) {
         return res.status(400).send(`Morate proslediti parametar 'id'`).end()
     }
 
-    sql.query(`DELETE FROM AKTIVNOST WHERE ID = ${req.body.id}`, (err, resp) => {
+    sql.query(`delete from aktivnost where id = ${req.body.id}`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()

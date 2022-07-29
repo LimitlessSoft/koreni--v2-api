@@ -1,11 +1,11 @@
 const mysql = require('mysql')
 
 const con = mysql.createConnection({
-    host: "174.138.184.42",
+    host: "koreni-v2-api.ct97tozelhun.eu-central-1.rds.amazonaws.com",
     port: "3306",
-    user: "SYSDBA",
-    password: "Plivanje123$",
-    database: "kor_main",
+    user: "plivac555",
+    password: "zRG69uq7nDdCqwSEURcJ",
+    database: "koreni-v2-main",
     timezone: 'Z'
 })
 

@@ -89,7 +89,7 @@ router.get('/get', function(req, res) {
         res.status(400).send("Morate proslediti parametar `username`").end()
     }
 
-    sql.query(`SELECT PW, TIP, DISPLAY_NAME, USERNAME FROM KORISNIK WHERE USERNAME = '${req.query.username}'`, (err, resp) => {
+    sql.query(`select pw, tip, display_name, username from korisnik where username = '${req.query.username}'`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -100,7 +100,7 @@ router.get('/get', function(req, res) {
 
 router.get('/list', function(req, res) {
 
-    sql.query(`SELECT USERNAME, PW, TIP, DISPLAY_NAME FROM KORISNIK`, (err, resp) => {
+    sql.query(`select username, pw, tip, display_name from korisnik`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -116,7 +116,7 @@ router.post('/token/generate', function(req, res) {
         return res.status(400).send("You must provide username and password!").end()
     }
 
-    sql.query(`SELECT PW, TIP FROM KORISNIK WHERE USERNAME = '${rbody.username}'`, (err, resp) => {
+    sql.query(`select pw, tip from korisnik where username = '${rbody.username}'`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -124,12 +124,12 @@ router.post('/token/generate', function(req, res) {
 
         var hp = hashPassword(rbody.password)
 
-        if(hp == resp[0].PW) {
+        if(hp == resp[0].pw) {
             var newToken = null
             while(newToken == null || existsInTokenStash(newToken)) {
                 newToken = sHash(Math.floor(Math.random() * 10000).toString())
             }
-            tokenStash.push({username: rbody.username, token: newToken, tip: resp[0].TIP})
+            tokenStash.push({username: rbody.username, token: newToken, tip: resp[0].tip})
             return res.status(200).send(newToken)
         }
         return res.status(403).end()
@@ -150,7 +150,7 @@ router.get('/getbytoken', function(req, res) {
 
     var un = global.getUsernameByRequest(req)
 
-    sql.query(`SELECT PW, TIP, DISPLAY_NAME, USERNAME FROM KORISNIK WHERE USERNAME = '${un}'`, (err, resp) => {
+    sql.query(`select pw, tip, display_name, username from korisnik where username = '${un}'`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -197,7 +197,7 @@ router.post('/insert', function(req, res) {
         return res.status(400).send(`Morate proslediti parametar 'passwod'!`)
     }
 
-    sql.query(`SELECT COUNT(USERNAME) AS BR FROM KORISNIK WHERE USERNAME = '${req.body.username}'`, (err, resp) => {
+    sql.query(`select count(username) as BR from korisnik where username = '${req.body.username}'`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -209,8 +209,8 @@ router.post('/insert', function(req, res) {
 
     var sifra = hashPassword(req.body.password)
 
-    sql.query(`INSERT INTO KORISNIK (USERNAME, PW, TIP, DISPLAY_NAME)
-        VALUES ('${req.body.username.trim()}', '${sifra}', ${req.body.tip}, '${req.body.displayName.trim()}')`, (err, resp) => {
+    sql.query(`insert into korisnik (username, pw, tip, display_name)
+        values ('${req.body.username.trim()}', '${sifra}', ${req.body.tip}, '${req.body.displayName.trim()}')`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()

@@ -8,7 +8,7 @@ router.post('/insert', function(req, res) {
         return res.status(403).end()
     }
     
-    sql.query(`SELECT COUNT(NASLOV) AS BR FROM LINK WHERE URL = '${req.body.url}'`, (err, resp) => {
+    sql.query(`select count(naslov) as BR from link where url = '${req.body.url}'`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -19,7 +19,7 @@ router.post('/insert', function(req, res) {
         }
     })
 
-    sql.query(`INSERT INTO LINK (NASLOV, URL, UCESNICI) VALUES ('${req.body.naslov}', '${req.body.url}', '${req.body.ucesnici}')`, (err, resp) => {
+    sql.query(`insert into link (naslov, url, ucesnici) values ('${req.body.naslov}', '${req.body.url}', '${req.body.ucesnici}')`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -30,7 +30,7 @@ router.post('/insert', function(req, res) {
 })
 
 router.get('/list', function(req, res) {
-    sql.query(`SELECT NASLOV, URL, UCESNICI FROM LINK`, (err, resp) => {
+    sql.query(`select naslov, url, ucesnici from link`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -46,7 +46,7 @@ router.delete('/delete', function(req, res) {
         return res.status(403).end()
     }
     
-    sql.query(`DELETE FROM LINK WHERE URL = '${req.body.url}'`, (err, resp) => {
+    sql.query(`delete from link where url = '${req.body.url}'`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
