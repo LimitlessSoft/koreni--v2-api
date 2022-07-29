@@ -35,5 +35,8 @@ app.use('/clanarina', apiClanarine)
 var apiAktivnostTip = require('./routers/aktivnostTip')
 app.use('/aktivnost/tip', apiAktivnostTip)
 
+var apiLink = require('./routers/link')
+app.use('/link', apiLink)
+
 app.listen(3000)
 console.log("Started @ http://localhost:3000/")

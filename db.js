@@ -5,7 +5,8 @@ const con = mysql.createConnection({
     port: "3306",
     user: "SYSDBA",
     password: "Plivanje123$",
-    database: "kor_main"
+    database: "kor_main",
+    timezone: 'Z'
 })
 
 con.connect(error => {

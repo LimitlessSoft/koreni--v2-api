@@ -14,6 +14,10 @@ router.get('/list', function(req, res) {
 })
 
 router.post('/insert', function(req, res) {
+
+    if(!global.isAdmin(req)) {
+        return res.status(403).end()
+    }
     
     if(req.body.naziv == null || req.body.naziv.trim().length == 0) {
         return res.status(400).send(`Morate proslediti parametar 'naziv'!`)

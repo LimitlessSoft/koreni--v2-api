@@ -14,6 +14,11 @@ router.get('/list', function(req, res) {
 })
 
 router.delete('/delete', function(req, res) {
+
+    if(!global.isAdmin(req)) {
+        return res.status(403).end()
+    }
+    
     if(req.body == null ||
         req.body.username == null ||
         req.body.username.trim().length == 0 ||
@@ -33,6 +38,10 @@ router.delete('/delete', function(req, res) {
 })
 
 router.post('/insertorupdate', function(req, res) {
+
+    if(!global.isAdmin(req)) {
+        return res.status(403).end()
+    }
     
     if(req.body.username == null || req.body.username.trim().length == 0) {
         return res.status(400).send(`Morate proslediti parametar 'username'`)

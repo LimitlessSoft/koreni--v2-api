@@ -2,6 +2,39 @@ var express = require('express')
 var router = express.Router()
 var sql = require('../db')
 
+router.get('/get', function(req, res) {
+    if(req.query.username == null ||
+        req.query.username.trim().length == 0) {
+            
+        return res.status(400).send(`Morate proslediti parametar 'username'`).end()
+    }
+
+    if(req.query.mesec == null) {
+            
+        return res.status(400).send(`Morate proslediti parametar 'mesec'`).end()
+    }
+
+    if(req.query.godina == null) {
+        return res.status(400).send(`Morate proslediti parametar 'godina'`).end()
+    }
+
+    sql.query(`SELECT KORISNIK, MESEC, GODINA, DATUM_PLACANJA FROM CLANARINA WHERE
+        KORISNIK = '${req.query.username}'
+        AND MESEC = ${req.query.mesec} AND
+        GODINA = ${req.query.godina}`, (err, resp) => {
+            if(err) {
+                console.log(err)
+                return res.status(500).end()
+            }
+
+            if(resp[0] == null) {
+                return res.status(204).end()
+            }
+
+            return res.json(resp[0])
+        })
+})
+
 router.get('/list', function(req, res) {
     sql.query(`SELECT KORISNIK, MESEC, GODINA, DATUM_PLACANJA FROM CLANARINA`, (err, resp) => {
         if(err) {
@@ -14,6 +47,11 @@ router.get('/list', function(req, res) {
 })
 
 router.post('/insertorupdate', function(req, res) {
+
+    if(!global.isAdmin(req)) {
+        return res.status(403).end()
+    }
+    
     
     if(req.body.username == null || req.body.username.trim().length == 0) {
         return res.status(400).send(`Morate poslati parametar 'username'!`)
@@ -44,6 +82,11 @@ router.post('/insertorupdate', function(req, res) {
 })
 
 router.delete('/delete', function(req, res) {
+
+    if(!global.isAdmin(req)) {
+        return res.status(403).end()
+    }
+    
     if(req.body == null ||
         req.body.korisnik == null ||
         req.body.korisnik.trim().length == 0 ||

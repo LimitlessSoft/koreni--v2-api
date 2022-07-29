@@ -5,6 +5,11 @@ var multer = require('multer')
 var upload = multer({dest: 'uploads/clanak/', limits: 10 * 1024 * 1024})
 
 router.post('/insert', upload.single('thumbnail'), function(req, res) {
+
+    if(!global.isAdmin(req)) {
+        return res.status(403).end()
+    }
+    
     console.log(req.body)
     console.log(req.thumbnail)
     console.log(req.body.thumbnail)
