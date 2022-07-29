@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser')
 
 var app = express()
 
-app.use(cors({ origin: ['http://localhost:3001', 'http://localhost:3002'], allowedHeaders: '*'}))
+app.use(cors({ origin: '*', allowedHeaders: '*'}))
 
 app.use(cookieParser())
 app.use(bodyParser.json({limit: "10mb", extended: true}))
