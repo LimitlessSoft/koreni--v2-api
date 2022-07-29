@@ -9,6 +9,8 @@ app.use(require('express-status-monitor')())
 
 app.use(cors({ origin: '*', allowedHeaders: '*'}))
 
+app.use(express.static('wwwroot'))
+
 app.use(cookieParser())
 app.use(bodyParser.json({limit: "10mb", extended: true}))
 app.use(bodyParser.urlencoded({ extended: true }))
