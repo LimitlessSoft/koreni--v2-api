@@ -1,15 +1,15 @@
-var express = require('express')
-var bodyParser = require('body-parser')
-var cors = require('cors')
-var cookieParser = require('cookie-parser')
-
-var app = express()
+const express = require('express')
+const bodyParser = require('body-parser')
+const cors = require('cors')
+const cookieParser = require('cookie-parser')
+const app = express()
+const path = require('path')
 
 app.use(require('express-status-monitor')())
 
 app.use(cors({ origin: '*', allowedHeaders: '*'}))
 
-app.use(express.static('wwwroot'))
+app.use(express.static(path.join(__dirname, 'wwwroot')))
 
 app.use(cookieParser())
 app.use(bodyParser.json({limit: "10mb", extended: true}))
