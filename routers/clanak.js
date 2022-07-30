@@ -39,7 +39,7 @@ router.get('/list', function(req, res) {
         whereQuery = ' WHERE ' + whereParameters.join(' AND ')
     }
 
-    sql.query(`SELECT SRC, NASLOV, THUMBNAIL, BODY, TIP FROM CLANAK ${whereQuery}`, (err, resp) => {
+    sql.query(`select src, naslov, thumbnail, body, tip from clanak ${whereQuery}`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
