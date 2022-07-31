@@ -10,6 +10,7 @@ app.use(require('express-status-monitor')())
 app.use(cors({ origin: '*', allowedHeaders: '*'}))
 
 app.use(express.static(path.join(__dirname, 'wwwroot')))
+app.use(express.static(path.join(__dirname, 'uploads')))
 
 app.use(cookieParser())
 app.use(bodyParser.json({limit: "10mb", extended: true}))
@@ -41,6 +42,15 @@ app.use('/aktivnost/tip', apiAktivnostTip)
 
 var apiLink = require('./routers/link')
 app.use('/link', apiLink)
+
+var apiUpload = require('./routers/upload')
+app.use('/upload', apiUpload)
+
+var apiParametar = require('./routers/parametar')
+app.use('/parametar', apiParametar)
+
+var apiGalerijaItem = require('./routers/galerijaItem')
+app.use('/galerija/item', apiGalerijaItem)
 
 app.listen(3000)
 console.log("Started @ http://localhost:3000/")
