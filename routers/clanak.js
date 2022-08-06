@@ -29,8 +29,8 @@ router.post('/insertorupdate', function(req, res) {
     }
     
     sql.query(`insert into clanak (src, naslov, thumbnail, body, tip) VALUES
-    ('${req.body.src}', '${req.body.naslov}', '${req.body.thumbnail}', '${req.body.body}', ${req.body.tip})
-    on duplicate key update naslov = '${req.body.naslov}', thumbnail = '${req.body.thumbnail}', body = '${req.body.body}'`, (err, resp) => {
+    ('${req.body.src}', '${req.body.naslov}', '${req.body.thumbnail}', ${sql.escape(req.body.body)}, ${req.body.tip})
+    on duplicate key update naslov = '${req.body.naslov}', thumbnail = '${req.body.thumbnail}', body = ${sql.escape(req.body.body)}`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
