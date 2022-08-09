@@ -69,7 +69,6 @@ router.post('/web-slika/delete', (req, res) => {
     if(req.body.filename == null) {
         return res.status(400).send(`Morate proslediti parametar 'filename'`)
     }
-    console.log(web_slike_folder + req.body.filename)
     fs.rm(web_slike_folder + req.body.filename, { force: true }, () => {
         return res.status(200).end()
     })
