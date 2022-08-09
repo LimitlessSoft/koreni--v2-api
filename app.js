@@ -11,6 +11,7 @@ app.use(cors({ origin: '*', allowedHeaders: '*'}))
 
 app.use(express.static(path.join(__dirname, 'wwwroot')))
 app.use(express.static(path.join(__dirname, 'uploads')))
+app.use(express.static(path.join(__dirname, 'web_slike')))
 
 app.use(cookieParser())
 app.use(bodyParser.json({limit: "10mb", extended: true}))
