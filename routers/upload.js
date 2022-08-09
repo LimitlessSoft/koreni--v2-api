@@ -53,10 +53,10 @@ router.post('/', upload.single('thumbnail'), function(req, res) {
 
 router.post('/web-slika', upload_web_slike.single('slika'), function(req, res) {
     if(req.file != null) {
-        return res.status(200).send(req.file.filename)
+        return res.status(200).send(req.file.filename).end()
     }
 
-    return res.status(400).send('none')
+    return res.status(400).send('none').end()
 })
 
 router.get('/web-slika/list', (req, res) => {
@@ -64,4 +64,15 @@ router.get('/web-slika/list', (req, res) => {
         return res.json(files)
     })
 })
+
+router.post('/web-slika/delete', (req, res) => {
+    if(req.body.filename == null) {
+        return res.status(400).send(`Morate proslediti parametar 'filename'`)
+    }
+    console.log(web_slike_folder + req.body.filename)
+    fs.rm(web_slike_folder + req.body.filename, { force: true }, () => {
+        return res.status(200).end()
+    })
+})
+
 module.exports = router
