@@ -31,10 +31,15 @@ router.post('/insertorupdate', function(req, res) {
     if(req.body.displayIndex == null) {
         return res.status(400).send(`Morate proslediti parametar 'displayIndex'`).end()
     }
+
+    if(req.body.prikaziHeader == null) {
+        return res.status(400).send(`Morate proslediti parametar 'prikaziHeader'`).end()
+    }
     
-    sql.query(`insert into clanak (src, naslov, thumbnail, body, tip, display_index) VALUES
-    ('${req.body.src}', '${req.body.naslov}', '${req.body.thumbnail}', ${sql.escape(req.body.body)}, ${req.body.tip}, ${req.body.displayIndex})
-    on duplicate key update naslov = '${req.body.naslov}', thumbnail = '${req.body.thumbnail}', body = ${sql.escape(req.body.body)}, display_index = ${req.body.displayIndex}`, (err, resp) => {
+    sql.query(`insert into clanak (src, naslov, thumbnail, body, tip, display_index, prikazi_header) VALUES
+    ('${req.body.src}', '${req.body.naslov}', '${req.body.thumbnail}', ${sql.escape(req.body.body)}, ${req.body.tip}, ${req.body.displayIndex}, ${req.body.prikaziHeader})
+    on duplicate key update naslov = '${req.body.naslov}', thumbnail = '${req.body.thumbnail}', body = ${sql.escape(req.body.body)},
+    display_index = ${req.body.displayIndex}, prikazi_header = ${req.body.prikaziHeader}`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -61,7 +66,7 @@ router.get('/list', function(req, res) {
         whereQuery = ' WHERE ' + whereParameters.join(' AND ')
     }
 
-    sql.query(`select src, naslov, thumbnail, body, tip, display_index from clanak ${whereQuery}`, (err, resp) => {
+    sql.query(`select src, naslov, thumbnail, body, tip, display_index, datum, prikazi_header from clanak ${whereQuery}`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
