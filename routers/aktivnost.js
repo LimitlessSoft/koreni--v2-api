@@ -3,7 +3,19 @@ var router = express.Router()
 var sql = require('../db')
 
 router.get('/list', function(req, res) {
-    sql.query(`select id, datum, tip, ucesnici from aktivnost`, (err, resp) => {
+
+    var selectQueryParts = []
+
+    if(req.query?.tip != null) {
+        selectQueryParts.push("tip = " + req.query.tip)
+    }
+
+    var selectQuery = ''
+    if(selectQueryParts.length > 0) {
+        selectQuery = `where ` + selectQueryParts.join(' AND ')
+    }
+
+    sql.query(`select id, datum, tip, ucesnici from aktivnost ` + selectQuery, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
