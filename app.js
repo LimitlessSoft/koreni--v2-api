@@ -4,6 +4,9 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const app = express()
 const path = require('path')
+const morgan = require('morgan')
+
+app.use(morgan('combined'))
 
 app.use(require('express-status-monitor')())
 
@@ -53,5 +56,6 @@ app.use('/parametar', apiParametar)
 var apiGalerijaItem = require('./routers/galerijaItem')
 app.use('/galerija/item', apiGalerijaItem)
 
+const port = 43156
 app.listen(3000)
-console.log("Started @ http://localhost:3000/")
+console.log("Koreni API started!")

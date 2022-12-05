@@ -89,7 +89,7 @@ router.get('/get', function(req, res) {
         res.status(400).send("Morate proslediti parametar `username`").end()
     }
 
-    sql.query(`select pw, tip, display_name, username from korisnik where username = '${req.query.username}'`, (err, resp) => {
+    sql.query(`select pw, tip, display_name, username, mobilni, datum_rodjenja, aktivan from korisnik where username = '${req.query.username}'`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -100,7 +100,7 @@ router.get('/get', function(req, res) {
 
 router.get('/list', function(req, res) {
 
-    sql.query(`select username, pw, tip, display_name from korisnik`, (err, resp) => {
+    sql.query(`select username, pw, tip, display_name, mobilni, datum_rodjenja, aktivan from korisnik`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -116,15 +116,28 @@ router.post('/token/generate', function(req, res) {
         return res.status(400).send("You must provide username and password!").end()
     }
 
-    sql.query(`select pw, tip from korisnik where username = '${rbody.username}'`, (err, resp) => {
+    sql.query(`select pw, tip, aktivan from korisnik where username = '${rbody.username}'`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
         }
 
+        if(resp.length == 0) {
+            return res.status(403).end()
+        }
+
         var hp = hashPassword(rbody.password)
 
         if(hp == resp[0].pw) {
+
+            if(resp[0].aktivan == 0) {
+                return res.status(401).send('Nalog je jos uvek na obradi!').end()
+            }
+    
+            if(resp[0].aktivan == 2) {
+                return res.status(401).send('Nalog je blokiran!').end()
+            }
+
             var newToken = null
             while(newToken == null || existsInTokenStash(newToken)) {
                 newToken = sHash(Math.floor(Math.random() * 10000).toString())
@@ -161,12 +174,15 @@ router.get('/getbytoken', function(req, res) {
 
 router.post('/insert', function(req, res) {
     
+    // req.body.datum_rodjejna se salje u formatu dd-MM-yyyy
+
     if(req == null || req.body.key == null || req.body.key != '3998f96e953bc1cb377f2269d637ebb5965f4e271f09e5c61664c807324e9f7b' )
     {
         if(!global.isAdmin(req)) {
             return res.status(403).end()
         }
     }
+
     if(req.body.username == null) {
         return res.status(400).send(`Morate proslediti parametar 'username'`).end()
     }
@@ -196,7 +212,15 @@ router.post('/insert', function(req, res) {
     }
 
     if(req.body.password == null || req.body.password.trim().length == 0) {
-        return res.status(400).send(`Morate proslediti parametar 'passwod'!`)
+        return res.status(400).send(`Morate proslediti parametar 'password'!`)
+    }
+
+    if(req.body.mobilni == null || req.body.mobilni.trim().length < 9) {
+        return res.status(400).send(`Neispravan parametar 'mobilni'!`)
+    }
+
+    if(req.body.datum_rodjenja == null || req.body.datum_rodjenja.length != 10) {
+        return res.status(400).send(`Neispravan parametar 'datum_rodjenja'!`)
     }
 
     sql.query(`select count(username) as BR from korisnik where username = '${req.body.username}'`, (err, resp) => {
@@ -210,9 +234,11 @@ router.post('/insert', function(req, res) {
     })
 
     var sifra = hashPassword(req.body.password)
+    var datumParts = req.body.datum_rodjenja.split('-')
+    var datumRodjenja = new Date(datumParts[2], (datumParts[1] * 1) - 1, (datumParts[0] * 1))
 
-    sql.query(`insert into korisnik (username, pw, tip, display_name)
-        values ('${req.body.username.trim()}', '${sifra}', ${req.body.tip}, '${req.body.displayName.trim()}')`, (err, resp) => {
+    sql.query(`insert into korisnik (username, pw, tip, display_name, mobilni, datum_rodjenja, aktivan)
+        values ('${req.body.username.trim()}', '${sifra}', ${req.body.tip}, '${req.body.displayName.trim()}', ${sql.escape(req.body.mobilni)}, ${sql.escape(datumRodjenja)}, 0)`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -221,6 +247,95 @@ router.post('/insert', function(req, res) {
         return res.status(201).end()
     })
         
+})
+
+router.post('/delete', function(req, res) {
+    if(req.body.username == null) {
+        return res.status(400).send(`Morate proslediti parametar 'username'`).end()
+    }
+
+    sql.query(`delete from korisnik where username = ${sql.escape(req.body.username)}`, (err, resp) => {
+        if(err) {
+            console.log(err)
+            return res.status(500).end()
+        }
+
+        sql.query(`delete from clanarina where korisnik = ${sql.escape(req.body.username)}`, (err, resp) => {
+            if(err) {
+                console.log(err)
+                return res.status(500).end()
+            }
+
+            sql.query(`delete from izostanak where username = ${sql.escape(req.body.username)}`, (err, resp) => {
+                if(err) {
+                    console.log(err)
+                    return res.status(500).end()
+                }
+
+                return res.status(200).end()
+            })
+        })
+        
+    })
+})
+
+router.post('/password/set', function(req, res) {
+    const newPW = hashPassword(req.body.password)
+    sql.query(`update korisnik set pw = ${sql.escape(newPW)} where username = ${sql.escape(req.body.username)}`, (err, resp) => {
+        if(err) {
+            console.log(err)
+            return res.status(500).end()
+        }
+
+        return res.status(200).end()
+    })
+})
+
+router.post('/aktivan/set', function(req, res) {
+    sql.query(`update korisnik set aktivan = ${sql.escape(req.body.aktivan)} where username = ${sql.escape(req.body.username)}`, (err, resp) => {
+        if(err) {
+            console.log(err)
+            return res.status(500).end()
+        }
+
+        return res.status(200).end()
+    })
+})
+
+router.post('/datum_rodjenja/set', function(req, res) {
+    // req.body.datum_rodjejna se salje u formatu dd-MM-yyyy
+    var datumParts = req.body.datum_rodjenja.split('-')
+    var datumRodjenja = new Date(datumParts[2], (datumParts[1] * 1) - 1, (datumParts[0] * 1))
+    sql.query(`update korisnik set datum_rodjenja = ${sql.escape(datumRodjenja)} where username = ${sql.escape(req.body.username)}`, (err, resp) => {
+        if(err) {
+            console.log(err)
+            return res.status(500).end()
+        }
+
+        return res.status(200).end()
+    })
+})
+
+router.post('/mobilni/set', function(req, res) {
+    sql.query(`update korisnik set mobilni = ${sql.escape(req.body.mobilni)} where username = ${sql.escape(req.body.username)}`, (err, resp) => {
+        if(err) {
+            console.log(err)
+            return res.status(500).end()
+        }
+
+        return res.status(200).end()
+    })
+})
+
+router.post('/display_name/set', function(req, res) {
+
+    sql.query(`update korisnik set display_name = ${sql.escape(req.body.display_name)} where username = ${sql.escape(req.body.username)}`, (err, resp) => {
+        if(err) {
+            console.log(err)
+            return res.status(500).end()
+        }
+        return res.status(200).end()
+    })
 })
 
 module.exports = router
