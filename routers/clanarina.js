@@ -91,7 +91,7 @@ router.delete('/delete', function(req, res) {
         req.body.korisnik.trim().length == 0 ||
         req.body.mesec == null ||
         req.body.godina == null ||
-        req.body.mesec <= 0 ||
+        req.body.mesec < 0 ||
         req.body.godina <= 0) {
             return res.status(400).send(`Morate proslediti parametre 'korisnik', 'mesec' i 'godina'!` ).end()
         }

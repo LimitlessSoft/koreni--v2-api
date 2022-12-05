@@ -89,7 +89,8 @@ router.get('/get', function(req, res) {
         res.status(400).send("Morate proslediti parametar `username`").end()
     }
 
-    sql.query(`select pw, tip, display_name, username, mobilni, datum_rodjenja, aktivan from korisnik where username = '${req.query.username}'`, (err, resp) => {
+    sql.query(`select pw, tip,display_name, username, mobilni,
+        datum_rodjenja, aktivan from korisnik where username = '${req.query.username}'`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -100,7 +101,8 @@ router.get('/get', function(req, res) {
 
 router.get('/list', function(req, res) {
 
-    sql.query(`select username, pw, tip, display_name, mobilni, datum_rodjenja, aktivan from korisnik`, (err, resp) => {
+    sql.query(`select username, pw, tip, display_name, mobilni,
+        datum_rodjenja, aktivan from korisnik`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
@@ -330,6 +332,17 @@ router.post('/mobilni/set', function(req, res) {
 router.post('/display_name/set', function(req, res) {
 
     sql.query(`update korisnik set display_name = ${sql.escape(req.body.display_name)} where username = ${sql.escape(req.body.username)}`, (err, resp) => {
+        if(err) {
+            console.log(err)
+            return res.status(500).end()
+        }
+        return res.status(200).end()
+    })
+})
+
+router.post('/tip/set', function(req, res) {
+
+    sql.query(`update korisnik set tip = ${sql.escape(req.body.tip)} where username = ${sql.escape(req.body.username)}`, (err, resp) => {
         if(err) {
             console.log(err)
             return res.status(500).end()
