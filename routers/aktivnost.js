@@ -77,4 +77,20 @@ router.delete('/delete', function(req, res) {
     })
 })
 
+router.delete('/delete-all-future', function(req, res) {
+    
+    if(!global.isAdmin(req)) {
+        return res.status(403).end()
+    }
+
+    sql.query(`delete from aktivnost where datum > ${sql.escape(new Date())}`, (err, resp) => {
+        if(err) {
+            console.log(err)
+            return res.status(500).end()
+        }
+
+        return res.status(200).end()
+    })
+})
+
 module.exports = router

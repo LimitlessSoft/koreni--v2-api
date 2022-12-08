@@ -29,6 +29,17 @@ router.post('/insert', function(req, res) {
     })
 })
 
+router.get('/get', function(req, res) {
+    sql.query(`select naslov, url, ucesnici from link where url = ${sql.escape(req.query.url)}`, (err, resp) => {
+        if(err) {
+            console.log(err)
+            return res.status(500).end()
+        }
+
+        return res.json(resp[0])
+    })
+})
+
 router.get('/list', function(req, res) {
     sql.query(`select naslov, url, ucesnici from link`, (err, resp) => {
         if(err) {
